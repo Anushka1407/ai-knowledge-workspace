@@ -22,3 +22,13 @@ venv/
 # Coverage
 .coverage
 htmlcov/
+
+# Terraform generated files
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+
+# Terraform plan files
+*.tfplan
