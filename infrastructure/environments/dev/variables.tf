@@ -1,5 +1,5 @@
 variable "location" {
-  description = "Azure region for the backend resources."
+  description = "Azure region for shared backend resources."
   type        = string
   default     = "uksouth"
 }
@@ -38,11 +38,20 @@ variable "web_app_name" {
 
 variable "common_tags" {
   description = "Common tags applied to all Azure resources."
-
-  type = map(string)
+  type        = map(string)
 }
 
 variable "app_service_location" {
   description = "Azure region for the App Service Plan and Web App."
+  type        = string
+}
+
+variable "docker_image_name" {
+  description = "Full Docker image name including registry, repository, and tag."
+  type        = string
+}
+
+variable "container_registry_login_server" {
+  description = "Azure Container Registry login server without the HTTPS prefix."
   type        = string
 }
