@@ -27,6 +27,7 @@ concurrency:
 
 env:
   IMAGE_NAME: ai-knowledge-backend
+  PYTHONPATH: ${{ github.workspace }}/backend
 
 jobs:
   backend-ci:
