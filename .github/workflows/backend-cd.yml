@@ -1,21 +1,20 @@
 name: Backend CD
 
 on:
-  push:
+  workflow_run:
+    workflows:
+      - "Backend CI"
+    types:
+      - completed
     branches:
       - main
-    paths:
-      - "backend/**"
-      - ".github/workflows/backend-cd.yml"
-
-  workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: backend-development-${{ github.run_id }}
+  group: backend-development
   cancel-in-progress: false
 
 env:
@@ -25,12 +24,12 @@ jobs:
   deploy:
     name: Deploy Backend
     runs-on: ubuntu-latest
+
+    if: github.event.workflow_run.conclusion == 'success'
+
     environment: development
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Sign in to Azure using OIDC
         uses: azure/login@v3
         with:
@@ -38,33 +37,12 @@ jobs:
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Sign in to Azure Container Registry
-        run: |
-          az acr login \
-            --name "${{ vars.AZURE_CONTAINER_REGISTRY }}"
-
-      - name: Build Docker image
-        working-directory: backend
-        run: |
-          docker build \
-            --tag "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:${{ github.sha }}" \
-            --tag "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:development" \
-            .
-
-      - name: Push Docker image
-        run: |
-          docker push \
-            "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:${{ github.sha }}"
-
-          docker push \
-            "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:development"
-
       - name: Deploy image to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ vars.AZURE_WEB_APP_NAME }}
           images: >-
-            ${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/ai-knowledge-backend:${{ github.sha }}
+            ${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.event.workflow_run.head_sha }}
 
       - name: Check deployed application
         shell: bash
