@@ -45,3 +45,19 @@ variable "app_service_location" {
   description = "Azure region for the App Service Plan and Web App."
   type        = string
 }
+
+variable "storage_account_name" {
+  description = "Globally unique Azure Storage account name."
+  type        = string
+}
+
+variable "document_intelligence_name" {
+  description = "Name of the Azure AI Document Intelligence resource."
+  type        = string
+}
+
+variable "storage_container_name" {
+  description = "Blob container used for uploaded documents."
+  type        = string
+  default     = "documents"
+}
