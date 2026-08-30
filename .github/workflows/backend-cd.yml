@@ -47,7 +47,7 @@ jobs:
       - name: Check deployed application
         shell: bash
         run: |
-          APP_URL="https://app-portfolio-api-dev-uks-crbabjgme9fvfrg8.canadacentral-01.azurewebsites.net"
+          APP_URL="https://app-portfolio-api-dev-uks.azurewebsites.net"
 
           for attempt in {1..18}; do
             echo "Health check attempt ${attempt}"
