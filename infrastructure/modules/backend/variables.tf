@@ -45,12 +45,18 @@ variable "app_service_location" {
   type        = string
 }
 
-variable "docker_image_name" {
-  description = "Full Docker image name including registry, repository, and tag."
+variable "storage_account_name" {
+  description = "Globally unique Azure Storage account name."
   type        = string
 }
 
-variable "container_registry_login_server" {
-  description = "Azure Container Registry login server without the HTTPS prefix."
+variable "document_intelligence_name" {
+  description = "Name of the Azure AI Document Intelligence resource."
   type        = string
+}
+
+variable "storage_container_name" {
+  description = "Blob container used for uploaded documents."
+  type        = string
+  default     = "documents"
 }
