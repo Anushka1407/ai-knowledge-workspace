@@ -4,7 +4,7 @@ variable "resource_group_name" {
 }
 
 variable "location" {
-  description = "Azure region for the resources."
+  description = "Azure region for shared resources."
   type        = string
 }
 
@@ -37,8 +37,7 @@ variable "web_app_name" {
 
 variable "common_tags" {
   description = "Common tags applied to all Azure resources."
-
-  type = map(string)
+  type        = map(string)
 }
 
 variable "app_service_location" {

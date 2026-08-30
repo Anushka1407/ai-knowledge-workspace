@@ -1,5 +1,7 @@
+location             = "uksouth"
+app_service_location = "canadacentral"
+
 resource_group_name = "rg-portfolio-dev-uks"
-location            = "uksouth"
 
 container_registry_name = "acrportfoliodev48291"
 container_registry_sku  = "Basic"
@@ -14,6 +16,6 @@ storage_container_name     = "documents"
 
 common_tags = {
   environment = "dev"
-  project     = "portfolio"
   managed_by  = "terraform"
+  project     = "portfolio"
 }

@@ -1,5 +1,5 @@
 variable "location" {
-  description = "Azure region for the backend resources."
+  description = "Azure region for shared backend resources."
   type        = string
   default     = "uksouth"
 }
@@ -38,8 +38,7 @@ variable "web_app_name" {
 
 variable "common_tags" {
   description = "Common tags applied to all Azure resources."
-
-  type = map(string)
+  type        = map(string)
 }
 
 variable "app_service_location" {
