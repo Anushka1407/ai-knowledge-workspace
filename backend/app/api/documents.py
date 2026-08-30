@@ -21,9 +21,9 @@ def get_document_intelligence_service() -> DocumentIntelligenceService:
 
 @router.post("/upload", response_model=ProcessedDocument, status_code=status.HTTP_201_CREATED)
 async def upload_document(
-    file: UploadFile = File(...),
-    blob_service: BlobStorageService = Depends(get_blob_service),
-    document_intelligence: DocumentIntelligenceService = Depends(
+    file: UploadFile = File(...),  # noqa: B008
+    blob_service: BlobStorageService = Depends(get_blob_service),  # noqa: B008
+    document_intelligence: DocumentIntelligenceService = Depends(  # noqa: B008
         get_document_intelligence_service
     ),
 ) -> ProcessedDocument:
