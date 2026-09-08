@@ -1,6 +1,11 @@
 from fastapi.testclient import TestClient
 
-from app.api.documents import get_blob_service, get_document_intelligence_service
+from app.api.documents import (
+    document_store,
+    get_blob_service,
+    get_document_intelligence_service,
+    semantic_index_service,
+)
 from app.main import app
 
 
@@ -14,10 +19,13 @@ class FakeBlobService:
 
 class FakeDocumentIntelligenceService:
     def analyze(self, content):
-        return {"pages": [{"page_number": 1}], "paragraphs": [{"content": "Hello"}]}
+        return {"pages": [{"page_number": 1}], "paragraphs": [{"content": "Hello world"}]}
 
 
 def test_upload_document_returns_processed_structure():
+    document_store.clear()
+    semantic_index_service.indexed_chunks.clear()
+
     blob_service = FakeBlobService()
     app.dependency_overrides[get_blob_service] = lambda: blob_service
     app.dependency_overrides[get_document_intelligence_service] = (
@@ -37,6 +45,36 @@ def test_upload_document_returns_processed_structure():
     assert body["status"] == "processed"
     assert body["filename"] == "sample.pdf"
     assert body["pages"] == [{"page_number": 1}]
-    assert body["paragraphs"] == [{"content": "Hello"}]
+    assert body["paragraphs"] == [{"content": "Hello world"}]
     assert len(blob_service.uploads) == 1
     assert blob_service.uploads[0][1] == b"%PDF-1.7"
+
+
+def test_search_documents_returns_ranked_results():
+    document_store.clear()
+    semantic_index_service.indexed_chunks.clear()
+
+    blob_service = FakeBlobService()
+    app.dependency_overrides[get_blob_service] = lambda: blob_service
+    app.dependency_overrides[get_document_intelligence_service] = (
+        lambda: FakeDocumentIntelligenceService()
+    )
+
+    try:
+        upload_response = TestClient(app).post(
+            "/documents/upload",
+            files={"file": ("sample.pdf", b"%PDF-1.7", "application/pdf")},
+        )
+        search_response = TestClient(app).post(
+            "/documents/search",
+            json={"query": "hello world", "top_k": 5},
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert upload_response.status_code == 201
+    assert search_response.status_code == 200
+    payload = search_response.json()
+    assert payload
+    assert payload[0]["document_id"] == upload_response.json()["document_id"]
+    assert "hello" in payload[0]["content"].lower()
