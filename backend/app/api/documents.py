@@ -14,15 +14,15 @@ document_store = {}
 async def get_blob_service() -> BlobStorageService:
     try:
         return BlobStorageService()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Blob service initialization failed: {str(e)}")
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Blob service initialization failed: {e!s}") from e
 
 
 async def get_document_intelligence_service() -> DocumentIntelligenceService:
     try:
         return DocumentIntelligenceService()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Document Intelligence service initialization failed: {str(e)}")
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Document Intelligence service initialization failed: {e!s}") from e
 
 
 @router.post("/upload", response_model=ProcessedDocument, status_code=status.HTTP_201_CREATED)
