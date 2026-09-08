@@ -65,6 +65,7 @@ resource "azurerm_linux_web_app" "this" {
     AZURE_STORAGE_ACCOUNT_URL            = azurerm_storage_account.documents.primary_blob_endpoint
     AZURE_STORAGE_CONTAINER_NAME         = azurerm_storage_container.documents.name
     AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT = azurerm_cognitive_account.document_intelligence.endpoint
+    WEBSITES_PORT                        = "8000"
   }
 
   site_config {
@@ -73,8 +74,8 @@ resource "azurerm_linux_web_app" "this" {
     ftps_state                              = "FtpsOnly"
 
     application_stack {
-      docker_image_name   = "mcr.microsoft.com/azuredocs/containerapps-helloworld:latest"
-      docker_registry_url = "https://mcr.microsoft.com"
+      docker_image_name   = "ai-knowledge-backend:latest"
+      docker_registry_url = "https://${var.container_registry_name}.azurecr.io"
     }
   }
 

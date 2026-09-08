@@ -86,9 +86,14 @@ jobs:
           docker tag \
             ai-knowledge-backend:${{ github.sha }} \
             "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:${{ github.sha }}"
+          docker tag \
+            ai-knowledge-backend:${{ github.sha }} \
+            "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:latest"
 
       - name: Push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           docker push \
             "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:${{ github.sha }}"
+          docker push \
+            "${{ vars.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${IMAGE_NAME}:latest"
