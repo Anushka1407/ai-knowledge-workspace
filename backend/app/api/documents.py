@@ -65,11 +65,7 @@ async def upload_document(
     )
 
 
-@router.post("/search")
-async def search_documents(
-    query: str = Body(..., embed=False),
-    top_k: int = Body(5, embed=False),
-) -> list[dict[str, object]]:
+def _search_documents(query: str, top_k: int) -> list[dict[str, object]]:
     """Return the highest-scoring indexed chunks for the supplied query."""
     if not query or not str(query).strip():
         return []
@@ -95,3 +91,41 @@ async def search_documents(
         )
 
     return enriched_results
+
+
+@router.post("/search")
+async def search_documents(
+    query: str = Body(..., embed=False),
+    top_k: int = Body(5, embed=False),
+) -> list[dict[str, object]]:
+    """Return the highest-scoring indexed chunks for the supplied query."""
+    return _search_documents(query=str(query), top_k=int(top_k))
+
+
+@router.post("/chat")
+async def chat_with_documents(
+    question: str = Body(..., embed=False),
+    top_k: int = Body(3, embed=False),
+) -> dict[str, object]:
+    """Answer a question using the most relevant indexed chunks as context."""
+    if not question or not str(question).strip():
+        return {"answer": "", "sources": []}
+
+    relevant_chunks = _search_documents(query=str(question), top_k=int(top_k))
+    if not relevant_chunks:
+        return {"answer": "I could not find relevant content in the indexed documents.", "sources": []}
+
+    context = "\n\n".join(chunk["content"] for chunk in relevant_chunks)
+    answer = f"Based on the indexed document context: {context}"
+    sources = [
+        {
+            "document_id": chunk["document_id"],
+            "filename": chunk["filename"],
+            "blob_path": chunk["blob_path"],
+            "page_number": chunk["page_number"],
+            "score": chunk["score"],
+        }
+        for chunk in relevant_chunks
+    ]
+
+    return {"answer": answer, "sources": sources}
