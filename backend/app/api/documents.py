@@ -11,12 +11,18 @@ router = APIRouter(prefix="/documents", tags=["Documents"])
 document_store = {}
 
 
-def get_blob_service() -> BlobStorageService:
-    return BlobStorageService()
+async def get_blob_service() -> BlobStorageService:
+    try:
+        return BlobStorageService()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Blob service initialization failed: {e!s}") from e
 
 
-def get_document_intelligence_service() -> DocumentIntelligenceService:
-    return DocumentIntelligenceService()
+async def get_document_intelligence_service() -> DocumentIntelligenceService:
+    try:
+        return DocumentIntelligenceService()
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=f"Document Intelligence service initialization failed: {e!s}") from e
 
 
 @router.post("/upload", response_model=ProcessedDocument, status_code=status.HTTP_201_CREATED)
