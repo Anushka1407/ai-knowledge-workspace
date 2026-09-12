@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import './App.css'
 
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL || 'https://app-portfolio-api-dev-uks.azurewebsites.net'
+).replace(/\/$/, '')
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -12,10 +14,6 @@ function App() {
   const [loading, setLoading] = useState(false)
 
   function getApiUrl(path) {
-    if (!API_BASE_URL) {
-      throw new Error('VITE_API_BASE_URL is not configured. Set it to the deployed backend URL.')
-    }
-
     return `${API_BASE_URL}${path}`
   }
 
