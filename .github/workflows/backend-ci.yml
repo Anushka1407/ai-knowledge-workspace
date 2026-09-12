@@ -10,12 +10,16 @@ on:
       - synchronize
     branches:
       - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
 
   push:
-    # Run CI on every branch push so PR updates trigger when the workflow file
-    # exists only in the feature branch and not yet on main.
-    branches-ignore:
-      - dependabot/**
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
 
 permissions:
   contents: read

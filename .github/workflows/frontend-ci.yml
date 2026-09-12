@@ -1,26 +1,41 @@
-name: Frontend CD
+name: Frontend CI
 
 on:
   workflow_dispatch: {}
+
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci.yml"
 
   push:
     branches:
       - main
     paths:
       - "frontend/**"
-      - ".github/workflows/frontend-cd.yml"
+      - ".github/workflows/frontend-ci.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: frontend-cd-${{ github.ref }}
+  group: frontend-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    name: Deploy Frontend
+  frontend-ci:
+    name: Frontend CI
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
 
     steps:
       - name: Checkout repository
@@ -35,19 +50,11 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: frontend
+
+      - name: Lint frontend
+        run: npm run lint
 
       - name: Build frontend
         env:
           VITE_API_BASE_URL: ${{ vars.AZURE_BACKEND_API_URL }}
         run: npm run build
-        working-directory: frontend
-
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "frontend"
-          output_location: "dist"
