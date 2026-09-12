@@ -61,3 +61,14 @@ variable "storage_container_name" {
   type        = string
   default     = "documents"
 }
+
+variable "static_web_app_location" {
+  description = "Azure region for the frontend Static Web App. Azure Static Web Apps only supports a limited set of regions."
+  type        = string
+  default     = "centralus"
+}
+
+variable "static_web_app_name" {
+  description = "Name of the Azure Static Web App used for the React frontend."
+  type        = string
+}
