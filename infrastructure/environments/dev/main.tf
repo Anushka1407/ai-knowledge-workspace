@@ -14,3 +14,12 @@ module "backend" {
   document_intelligence_name = var.document_intelligence_name
   storage_container_name     = var.storage_container_name
 }
+
+module "frontend" {
+  source = "../../modules/frontend"
+
+  resource_group_name = var.resource_group_name
+  location            = var.static_web_app_location
+  static_web_app_name = var.static_web_app_name
+  common_tags         = var.common_tags
+}

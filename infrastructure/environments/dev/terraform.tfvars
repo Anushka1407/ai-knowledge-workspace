@@ -1,5 +1,6 @@
 location             = "uksouth"
-app_service_location = "canadacentral"
+app_service_location = "uksouth"
+static_web_app_location = "centralus"
 
 resource_group_name = "rg-portfolio-dev-uks"
 
@@ -12,6 +13,7 @@ web_app_name               = "app-portfolio-api-dev-uks"
 storage_account_name       = "stportfoliodev48291"
 document_intelligence_name = "di-portfolio-dev-uks"
 storage_container_name     = "documents"
+static_web_app_name        = "swa-portfolio-dev-uks"
 
 common_tags = {
   environment = "dev"

@@ -65,7 +65,6 @@ resource "azurerm_linux_web_app" "this" {
     AZURE_STORAGE_ACCOUNT_URL            = azurerm_storage_account.documents.primary_blob_endpoint
     AZURE_STORAGE_CONTAINER_NAME         = azurerm_storage_container.documents.name
     AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT = azurerm_cognitive_account.document_intelligence.endpoint
-    DOCKER_REGISTRY_SERVER_URL           = "https://${var.container_registry_name}.azurecr.io"
     WEBSITES_PORT                        = "8000"
   }
 
