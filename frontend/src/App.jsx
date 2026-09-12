@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null)
@@ -10,6 +10,14 @@ function App() {
   const [chatAnswer, setChatAnswer] = useState('')
   const [sources, setSources] = useState([])
   const [loading, setLoading] = useState(false)
+
+  function getApiUrl(path) {
+    if (!API_BASE_URL) {
+      throw new Error('VITE_API_BASE_URL is not configured. Set it to the deployed backend URL.')
+    }
+
+    return `${API_BASE_URL}${path}`
+  }
 
   async function handleUpload(event) {
     event.preventDefault()
@@ -24,7 +32,7 @@ function App() {
 
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+      const response = await fetch(getApiUrl('/documents/upload'), {
         method: 'POST',
         body: formData,
       })
@@ -53,7 +61,7 @@ function App() {
 
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/documents/chat`, {
+      const response = await fetch(getApiUrl('/documents/chat'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
